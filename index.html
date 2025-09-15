@@ -19,33 +19,24 @@
             </div>
 
             <div class="search-buttons-container">
-                <button class="main-btn" id="button-types">Types</button>
+                <button class="main-btn" id="button-types" onclick="displayType()">Types</button>
                 <button class="main-btn" id="button-random">Surprise!</button>
                 <input type="text" id="pokemonNameID" placeholder="Search by name or ID">
                 <button class="main-btn" id="search-button">🔎</button>
             </div>
         </header>
 
-         <div id="pokemonList" class="list">
-            <div class="pokemon">
-                <p class="pokemon-name">Bulbasaur</p>
-                <div class="pokemon-image">
-                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png" 
-                    alt="Pikachu">
-                </div>
-                <div class="pokemon-info">
-                    <p class="pokemon-id">#1</p>
-                </div>
-                <div class="pokemon-types">
-                    <p class="grass type">GRASS</p>
-                    <p class="poison type">POISON</p>
-                </div>
-
-            </div>
-
+        <div id="pokemonList" class="list">
         </div> 
-        
+
+        <div class="control-pagination">
+            <button class="footer-btn" id="previous-btn"><- Previous</button>
+            <button class="footer-btn" id="next-btn">Next -></button>
+        </div>
+
     </div>
+
+    <script src="script.js"></script>
     
 </body>
 </html>
