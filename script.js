@@ -1,5 +1,8 @@
 const pokemonList = document.querySelector('#pokemonList');
 const pokemonCard = document.querySelector('pokemon');
+let typesPage = document.querySelector('.types-page');
+typesPage.style.display = 'none';
+
 let pokemonPage = 1;
 
 const pokemonBase = 18;
@@ -66,6 +69,7 @@ function showPokemon(data) {
 // Pagination buttons
 let ifFirstPrevClick = true;
 
+// Previous Button
 function showPreviousPokemonList() {
     pokemonList.innerHTML = '';
 
@@ -79,11 +83,12 @@ function showPreviousPokemonList() {
     }
     else { pokemonPage = pokemonPage - 1 }
 
-    console.log(pokemonPage);
-
     fetchMorePokemon(pokemonPage);
+
+    if (pokemonPage == 0) { pokemonPage = 1 }
 }
 
+// Next Button
 function showNextPokemonList() {
     pokemonList.innerHTML = '';
 
@@ -98,5 +103,11 @@ document.querySelector('#next-btn').addEventListener('click', showNextPokemonLis
 
 // Interaction with 'Types' button
 function displayType() {
+    document.querySelector('.logo-title').style.display = 'none';
+    document.querySelector('.search-buttons-container').style.display = 'none';
+    document.querySelector('.control-pagination').style.display = 'none';
+    pokemonList.innerHTML = '';
+
+    typesPage.style.display = 'flex';
 
 }

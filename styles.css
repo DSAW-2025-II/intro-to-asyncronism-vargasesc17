@@ -100,7 +100,7 @@ button {
     font-family: 'Pixelify Sans', sans-serif;
 }
 
-#pokemonList {
+.list {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 0.5rem;
@@ -176,6 +176,65 @@ button {
     transform: scale(1.05)
 }
 
+.types-page {
+    display: flex;
+    flex-direction: column;
+}
+
+.types-title-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 2rem;
+}
+
+.types-title-btn #main-close-btn {
+    cursor: pointer;
+    border: 0;
+    background-color: transparent;
+    font-size: 1.1rem;
+}
+
+.types-title-btn #main-close-btn:hover {
+    color: rgb(52, 140, 235);
+}
+
+.types-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.list-element.type {
+    border: solid black;
+    border-radius: 50px;
+    width: 180px;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    row-gap: 0px;
+}
+
+.list-element p {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.type-image img {
+    display: block;
+    width: 150px;
+    height: 150px;
+}
+
+.list-element:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 2rem rgba(0, 0, 0, 0.25);
+}
+
+
+/* Media queries */
 @media  (max-width: 481px) {
     .logo-title {
         display: flex;
@@ -197,6 +256,11 @@ button {
         margin: 0 auto;
         grid-template-columns: 1fr;
     }
+
+    .types-list {
+        margin: 0 auto;
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (min-width: 482px) and (max-width: 710px) {
@@ -208,16 +272,21 @@ button {
         align-items: center;
     }
 
-    #pokemonList {
+    .list {
         margin: 0 auto;
         grid-template-columns: 1fr 1fr;
     }
+
 }
 
 @media (min-width: 711px) and (max-width: 990px) {
-    #pokemonList {
+    .list {
         margin: 0 auto;
         grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .types-title-btn #main-close-btn {
+        font-size: 1.5rem;
     }
 
 }
