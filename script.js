@@ -11,6 +11,7 @@ const typesMainBtn = document.querySelector('#button-types');
 const surpriseBtn = document.querySelector('#button-random');
 const homeBtn = document.querySelector('#main-close-btn');
 const pokedexLogo = document.querySelector('#pokedex-logo');
+const errorMessage = document.querySelector('#error-msg');
 
 const baseURL = 'https://pokeapi.co/api/v2';
 
@@ -25,9 +26,13 @@ fetchAllPokemons();
 pokedexLogo.addEventListener('click', () => {
     pokemonList.innerHTML = "";
     paginationControls.style.display = 'flex';
+    pokemonList.style.display = 'grid';
+    errorMessage.style.display = 'none';
+    console.clear();
     fetchAllPokemons();
 });
 
+errorMessage.style.display = 'none';
 typesPage.style.display = 'none';
 previousBtn.disabled = true;
 
@@ -210,13 +215,21 @@ async function searchNameId() {
 
     try {
         const response = await fetch(baseURL + `/pokemon/${input}`);
+
+        if(!response.ok) {
+            pokemonList.innerHTML = '';
+            errorMessage.style.display = 'block';
+            console.error(`Error ${response.status}: Pokémon not found.`);
+            return;
+        }
+
         const data = await response.json();
 
         pokemonList.innerHTML = '';
         showPokemon(data);
 
     }
-    catch {
+    catch (error) {
         console.log(error);
     }
 }
@@ -230,3 +243,34 @@ homeBtn.addEventListener('click', () => {
 
     fetchAllPokemons();
 });
+
+surpriseBtn.addEventListener('click', async () => {
+    paginationControls.style.display = 'none';
+    pokemonList.innerHTML = "";
+
+    pokemonList.style.display = 'flex';
+    pokemonList.style.flexDirection = 'column';
+    pokemonList.style.alignItems = 'center';
+    pokemonList.style.gap = '0.6rem';
+    
+    const newId = Math.floor(Math.random() * 1025) + 1;
+
+    try {
+        const response = await fetch(baseURL + `/pokemon/${newId}`);
+        const data = await response.json();
+
+        pokemonList.innerHTML = '';
+        showPokemon(data);
+
+    }
+    catch (error) {
+        console.log(error);
+    }
+
+    const message = document.createElement('p');
+    message.textContent = '¡Eureka! A random Pokémon just for you :)';
+    message.classList.add('urprise-message');
+    pokemonList.appendChild(message);
+
+
+})

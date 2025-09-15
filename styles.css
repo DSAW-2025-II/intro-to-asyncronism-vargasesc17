@@ -235,6 +235,12 @@ button {
     box-shadow: 0 0 2rem rgba(0, 0, 0, 0.25);
 }
 
+#error-msg {
+    background-color: rgb(179, 78, 77);
+    padding: 0.05rem 1rem;
+    border: solid rgb(112, 52, 52);
+    border-radius: 10px;
+}
 
 /* Media queries */
 @media  (max-width: 481px) {
