@@ -1,36 +1,80 @@
 const pokemonList = document.querySelector('#pokemonList');
 const pokemonCard = document.querySelector('pokemon');
+const typesButtons = document.querySelectorAll('.list-element.type');
+const paginationControls = document.querySelector('.control-pagination');
+const typesList = document.querySelector('.types-page');
+const previousBtn = document.querySelector('#previous-btn');
+
+previousBtn.disabled = true;
+
 let typesPage = document.querySelector('.types-page');
 typesPage.style.display = 'none';
 
-let pokemonPage = 1;
+let pokemonPage = 0;
 
 const pokemonBase = 18;
-const baseURL = 'https://pokeapi.co/api/v2'
+const baseURL = 'https://pokeapi.co/api/v2';
 
-fetchPokemon();
+let currentArray = []
+let allPokemons = [];
 
-async function fetchPokemon() {
+fetchAllPokemons();
+
+async function fetchAllPokemons() {
     try {
-        for (let i = 1; i <= pokemonBase; i++) {
-            const response = await fetch(baseURL + `/pokemon/${i}`);
-            const data = await response.json();
+        const response = await fetch(baseURL + `/pokemon/?limit=1025`);
+        const data = await response.json();
 
-            showPokemon(data);
-        } 
-    }
+        allPokemons = data.results;
+        currentArray = allPokemons
+
+        fetchPokemon();
+
+    } 
     catch (error) {
         console.log(error);
     }
 }
 
-async function fetchMorePokemon(pokePage) {
-    try {
-        for (let i = (pokePage * pokemonBase) + 1; i < (pokePage*pokemonBase) + 19; i++) {
-            const response = await fetch(baseURL + `/pokemon/${i}`);
-            const data = await response.json();
+async function fetchPokemon() {
+    for (let i = 0; i <= pokemonBase - 1; i++) {
+        try {
+            if(currentArray[i].url) {
+                const response = await fetch(currentArray[i].url);
+                const data = await response.json();
 
-            showPokemon(data);
+                showPokemon(data);
+            } else {
+                showPokemon(currentArray[i]);
+            }
+        } 
+        catch (error) { 
+            console.log(error);
+        }
+    }
+}
+
+async function fetchMorePokemon() {
+    if (pokemonPage < 1) {
+        previousBtn.disabled = true;
+        fetchPokemon();
+        return;
+    }
+
+    try {
+        const end = (pokemonBase * pokemonPage) + pokemonBase;
+
+        for (let i = (pokemonPage * pokemonBase); i < end && currentArray.length; i++) {
+            
+            if(currentArray[i].url) {
+                const response = await fetch(currentArray[i].url);
+                const data = await response.json();
+
+                showPokemon(data);
+            } else {
+                showPokemon(currentArray[i]);
+            }
+
         }
     } catch (error) {
         console.log(error);
@@ -67,38 +111,27 @@ function showPokemon(data) {
 }
 
 // Pagination buttons
-let ifFirstPrevClick = true;
 
 // Previous Button
 function showPreviousPokemonList() {
     pokemonList.innerHTML = '';
+    
+    pokemonPage -= 1;
 
-    if (pokemonPage == 1) {
-        fetchPokemon();
-        return;
-    }
-
-    if (ifFirstPrevClick) {pokemonPage = pokemonPage - 2; 
-        ifFirstPrevClick = false;
-    }
-    else { pokemonPage = pokemonPage - 1 }
-
-    fetchMorePokemon(pokemonPage);
-
-    if (pokemonPage == 0) { pokemonPage = 1 }
+    fetchMorePokemon();
 }
 
 // Next Button
 function showNextPokemonList() {
+    previousBtn.disabled = false;
     pokemonList.innerHTML = '';
-
-    fetchMorePokemon(pokemonPage);
-    ifFirstPrevClick = true;
-
-    pokemonPage = pokemonPage + 1;
+    
+    pokemonPage += 1;
+    
+    fetchMorePokemon();
 }
 
-document.querySelector('#previous-btn').addEventListener('click', showPreviousPokemonList);
+previousBtn.addEventListener('click', showPreviousPokemonList);
 document.querySelector('#next-btn').addEventListener('click', showNextPokemonList);
 
 // Interaction with 'Types' button
@@ -109,5 +142,36 @@ function displayType() {
     pokemonList.innerHTML = '';
 
     typesPage.style.display = 'flex';
-
 }
+
+async function fetchPokemonByType(event) {
+    const id = event.currentTarget.id;
+    const buttonType = id.replace('-blk', '');
+
+    const response = await fetch(baseURL + `/type/${buttonType}`);
+    const data = await response.json();
+
+    typesList.innerHTML = "";
+    typesPage.style.display = 'none';
+    paginationControls.style.display = 'flex';
+    paginationControls.style.justifyContent = 'center';
+
+    try {
+        const fetchPromises = data.pokemon.map(p => fetch(p.pokemon.url).then(response => response.json()));
+
+        const pokemonsType = await Promise.all(fetchPromises);
+
+        currentArray = pokemonsType;
+        pokemonPage = 0;              
+
+        pokemonList.innerHTML = '';
+
+        for (let i = 0; i < pokemonBase && i < currentArray.length; i++) {
+            showPokemon(currentArray[i]);
+        }
+    } catch {
+        console.log(error);
+    }
+}
+
+typesButtons.forEach(button => button.addEventListener('click', fetchPokemonByType));
