@@ -44,6 +44,7 @@ body {
 #pokedex-logo {
     max-width: 508px;
     min-width: 300px;
+    cursor: pointer;
 }
 
 .logo-title {
@@ -215,6 +216,7 @@ button {
     justify-content: flex-end;
     align-items: center;
     row-gap: 0px;
+    cursor: pointer;
 }
 
 .list-element p {
