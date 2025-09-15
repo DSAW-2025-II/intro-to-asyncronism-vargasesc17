@@ -15,6 +15,28 @@ const errorMessage = document.querySelector('#error-msg');
 
 const baseURL = 'https://pokeapi.co/api/v2';
 
+const typesArray = [
+    {name: 'normal', idPokemon: 143},
+    {name: 'fire', idPokemon: 6},
+    {name: 'water', idPokemon: 130},
+    {name: 'grass', idPokemon: 3},
+    {name: 'electric', idPokemon: 25},
+    {name: 'ice', idPokemon: 144},
+    {name: 'fighting', idPokemon: 68},
+    {name: 'poison', idPokemon: 429},
+    {name: 'ground', idPokemon: 95},
+    {name: 'flying', idPokemon: 18},
+    {name: 'psychic', idPokemon: 150},
+    {name: 'bug', idPokemon: 123},
+    {name: 'rock', idPokemon: 74},
+    {name: 'ghost', idPokemon: 94},
+    {name: 'dark', idPokemon: 149},
+    {name: 'dragon', idPokemon: 197},
+    {name: 'steel', idPokemon: 208},
+    {name: 'fairy', idPokemon: 700},
+];
+
+
 let typesPage = document.querySelector('.types-page');
 let pokemonPage = 0;
 let currentArray = []
@@ -151,6 +173,35 @@ function showNextPokemonList() {
 document.querySelector('#next-btn').addEventListener('click', showNextPokemonList);
 
 // Interaction with 'Types' button
+function generateTypes() {
+    const typesListUl = document.querySelector('.types-list');
+    typesListUl.innerHTML = ''; // limpiamos el contenido previo
+
+    typesArray.forEach(type => {
+        const li = document.createElement('li');
+        li.classList.add('type-item');
+
+        const div = document.createElement('div');
+        div.classList.add('list-element', 'type', type.name);
+        div.id = `${type.name}-blk`;
+
+        div.innerHTML = `
+            <div class="type-image">
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${type.idPokemon}.png" 
+                    alt="${type.name}">
+            </div>
+            <div class="type-info">
+                <p class="type-name">${type.name.charAt(0).toUpperCase() + type.name.slice(1)}</p>
+            </div>
+        `;
+
+        li.appendChild(div);
+        typesListUl.appendChild(li);
+
+        div.addEventListener('click', fetchPokemonByType);
+    });
+}
+
 function displayType() {
     document.querySelector('.logo-title').style.display = 'none';
     document.querySelector('.search-buttons-container').style.display = 'none';
@@ -158,6 +209,8 @@ function displayType() {
     pokemonList.innerHTML = '';
 
     typesPage.style.display = 'flex';
+
+    generateTypes();
 }
 
 async function fetchPokemonByType(event) {
