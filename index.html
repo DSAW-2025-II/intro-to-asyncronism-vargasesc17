@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
-    <link rel="icon" href="/images/pokeball.png">
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet"><link rel="icon" href="/images/pokeball.png">
     <link rel="stylesheet" href="styles.css">
     <title>Pokédex</title>
 </head>
@@ -14,7 +13,7 @@
     <div class="container" id="main-container">
         <header>
             <div class="logo-title">
-                <img id="pokedex-logo" src="/images/pokedex.png" alt="Pokédex title" class="logo">
+                <img id="pokedex-logo" src="/images/pokedex.png" alt="Pokédex title" class="logo home">
                 <h1>Where's your Pokémon?</h1>
             </div>
 
@@ -23,11 +22,14 @@
                 <button class="main-btn independent" id="button-random">Surprise!</button>
                 <input type="text" id="pokemonNameID" placeholder="Search by name or ID">
                 <button class="main-btn" id="search-button">🔎</button>
+                <img src="/images/home-logo.png" alt="Home Logo" class="main-btn home" id="alternative-home-btn"></img>
             </div>
         </header>
 
         <div id="pokemonList" class="list">
         </div> 
+
+        <div id="modal"></div>
 
         <div class="control-pagination">
             <button class="footer-btn" id="previous-btn"><- Previous</button>
