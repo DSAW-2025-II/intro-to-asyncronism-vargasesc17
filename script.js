@@ -1,3 +1,4 @@
+const mainContainer = document.querySelector('#main-container');
 const pokemonList = document.querySelector('#pokemonList');
 const pokemonCard = document.querySelector('pokemon');
 const typesButtons = document.querySelectorAll('.list-element.type');
@@ -5,6 +6,7 @@ const searchButton = document.querySelector('#search-button');
 const paginationControls = document.querySelector('.control-pagination');
 const typesList = document.querySelector('.types-page');
 const previousBtn = document.querySelector('#previous-btn');
+const nextBtn = document.querySelector('#next-btn');
 const pokemonBase = 18;
 const nameId = document.querySelector('#pokemonNameID');
 const typesMainBtn = document.querySelector('#button-types');
@@ -36,16 +38,18 @@ const typesArray = [
     {name: 'fairy', idPokemon: 700},
 ];
 
-
 let typesPage = document.querySelector('.types-page');
 let pokemonPage = 0;
 let currentArray = []
 let allPokemons = [];
 
+// Initialize the Pokédex
 fetchAllPokemons();
 
 // Home Button
 pokedexLogo.addEventListener('click', () => {
+    pokemonPage = 0;
+
     pokemonList.innerHTML = "";
     paginationControls.style.display = 'flex';
     pokemonList.style.display = 'grid';
@@ -54,6 +58,7 @@ pokedexLogo.addEventListener('click', () => {
     fetchAllPokemons();
 });
 
+// Some previous considerations
 errorMessage.style.display = 'none';
 typesPage.style.display = 'none';
 previousBtn.disabled = true;
@@ -92,16 +97,22 @@ async function fetchPokemon() {
 }
 
 async function fetchMorePokemon() {
+    const totalPages = Math.ceil(currentArray.length / 18);
+
     if (pokemonPage < 1) {
         previousBtn.disabled = true;
         fetchPokemon();
         return;
     }
 
+    if (pokemonPage == totalPages - 1) {
+        nextBtn.disabled = true;
+    }
+
     try {
         const end = (pokemonBase * pokemonPage) + pokemonBase;
 
-        for (let i = (pokemonPage * pokemonBase); i < end && currentArray.length; i++) {
+        for (let i = (pokemonPage * pokemonBase); i < end && i < currentArray.length; i++) {
             
             if(currentArray[i].url) {
                 const response = await fetch(currentArray[i].url);
@@ -120,10 +131,10 @@ async function fetchMorePokemon() {
 
 // Show initial info of the Pokémon
 function showPokemon(data) {
-    const name = data.name.charAt(0).toUpperCase() + data.name.slice(1);
-    let types = data.types.map(type => `<p class="${type.type.name} type">${type.type.name.toUpperCase()}</p>`);
-    types = types.join('');
+    errorMessage.style.display = 'none';
 
+    const name = data.name.charAt(0).toUpperCase() + data.name.slice(1);
+    let types = data.types.map(type => `<p class="${type.type.name} type">${type.type.name.toUpperCase()}</p>`).join('');
     const mainType = data.types[0].type.name;
     const cssColorName = `--type-${mainType}`;
     const borderColor = getComputedStyle(document.documentElement).getPropertyValue(cssColorName).trim() || '#000';
@@ -131,19 +142,33 @@ function showPokemon(data) {
     const div = document.createElement("div");
     div.classList.add("pokemon");
     div.style.border = `solid ${borderColor}`;
+
+    const img = document.createElement('img');
+    img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png`;
+    img.alt = data.name;
+
+    img.onerror = () => {
+        img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${data.id}.png`;
+    };
+
     div.innerHTML = `
         <p class="pokemon-name">${name}</p>
-        <div class="pokemon-image">
-            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png" 
-            alt=${data.name}>
-        </div>
+        <div class="pokemon-image"></div>
         <div class="pokemon-info">
             <p class="pokemon-id">#${data.id}</p>
         </div>
         <div class="pokemon-types">
             ${types}
         </div>
-    </div>`;
+    `;
+
+    div.querySelector('.pokemon-image').appendChild(img);
+
+    const pokeName = div.querySelector('.pokemon-name');
+    if (name.length > 20) {
+        pokeName.style.fontSize = '0.8rem';
+    }
+
     pokemonList.appendChild(div);
 }
 
@@ -152,13 +177,13 @@ function showPokemon(data) {
 // Previous Button
 function showPreviousPokemonList() {
     pokemonList.innerHTML = '';
-    
     pokemonPage -= 1;
-
+    nextBtn.disabled = false;
     fetchMorePokemon();
 }
 
 previousBtn.addEventListener('click', showPreviousPokemonList);
+nextBtn.addEventListener('click', showNextPokemonList);
 
 // Next Button
 function showNextPokemonList() {
@@ -170,7 +195,6 @@ function showNextPokemonList() {
     fetchMorePokemon();
 }
 
-document.querySelector('#next-btn').addEventListener('click', showNextPokemonList);
 
 // Interaction with 'Types' button
 function generateTypes() {
@@ -182,19 +206,20 @@ function generateTypes() {
         li.classList.add('type-item');
 
         const div = document.createElement('div');
+
         div.classList.add('list-element', 'type', type.name);
         div.id = `${type.name}-blk`;
 
         div.innerHTML = `
-            <div class="type-image">
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${type.idPokemon}.png" 
-                    alt="${type.name}">
-            </div>
-            <div class="type-info">
-                <p class="type-name">${type.name.charAt(0).toUpperCase() + type.name.slice(1)}</p>
-            </div>
+        <div class="type-image">
+        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${type.idPokemon}.png" 
+        alt="${type.name}">
+        </div>
+        <div class="type-info">
+        <p class="type-name">${type.name.charAt(0).toUpperCase() + type.name.slice(1)}</p>
+        </div>
         `;
-
+        
         li.appendChild(div);
         typesListUl.appendChild(li);
 
@@ -214,27 +239,45 @@ function displayType() {
 }
 
 async function fetchPokemonByType(event) {
+    pokemonList.innerHTML = '';
+
+    const goBackBtn = document.createElement('button');
+    goBackBtn.id = 'go-back-btn';
+    goBackBtn.classList.add('close-btn');
+    goBackBtn.innerHTML = "<- <u>Go Back</u>";
+    goBackBtn.style.display = 'block';
+    goBackBtn.style.marginTop = '1rem';
+    goBackBtn.style.marginBottom = '1rem';
+
+    goBackBtn.addEventListener('click', () => {
+        pokemonList.innerHTML = '';
+        typesPage.style.display = 'flex';
+        goBackBtn.style.display = 'none';
+        paginationControls.style.display = 'none';
+
+        generateTypes();
+    });
+
+    mainContainer.prepend(goBackBtn);
+
     const id = event.currentTarget.id;
     const buttonType = id.replace('-blk', '');
 
     const response = await fetch(baseURL + `/type/${buttonType}`);
     const data = await response.json();
-
-    typesList.innerHTML = "";
+    
     typesPage.style.display = 'none';
     paginationControls.style.display = 'flex';
     paginationControls.style.justifyContent = 'center';
-
+    
     try {
         const fetchPromises = data.pokemon.map(p => fetch(p.pokemon.url).then(response => response.json()));
-
+        
         const pokemonsType = await Promise.all(fetchPromises);
-
+        
         currentArray = pokemonsType;
         pokemonPage = 0;              
-
-        pokemonList.innerHTML = '';
-
+        
         for (let i = 0; i < pokemonBase && i < currentArray.length; i++) {
             showPokemon(currentArray[i]);
         }
@@ -314,7 +357,6 @@ surpriseBtn.addEventListener('click', async () => {
 
         pokemonList.innerHTML = '';
         showPokemon(data);
-
     }
     catch (error) {
         console.log(error);
@@ -322,8 +364,6 @@ surpriseBtn.addEventListener('click', async () => {
 
     const message = document.createElement('p');
     message.textContent = '¡Eureka! A random Pokémon just for you :)';
-    message.classList.add('urprise-message');
+    message.classList.add('surprise-message');
     pokemonList.appendChild(message);
-
-
 })

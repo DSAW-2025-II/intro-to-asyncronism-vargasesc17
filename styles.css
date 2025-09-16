@@ -189,14 +189,14 @@ button {
     padding-inline: 2rem;
 }
 
-.types-title-btn #main-close-btn {
+.close-btn {
     cursor: pointer;
     border: 0;
     background-color: transparent;
     font-size: 1.1rem;
 }
 
-.types-title-btn #main-close-btn:hover {
+.close-btn:hover {
     color: rgb(52, 140, 235);
 }
 
