@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet"><link rel="icon" href="/images/pokeball.png">
+    <link rel="stylesheet" href="styles.css">
+    <title>Pokédex</title>
+</head>
+<body>
+    <div class="container" id="main-container">
+        <header>
+            <div class="logo-title">
+                <img id="pokedex-logo" src="/images/pokedex.png" alt="Pokédex title" class="logo home">
+                <h1>Where's your Pokémon?</h1>
+            </div>
+
+            <div class="search-buttons-container">
+                <button class="main-btn independent" id="button-types" onclick="displayType()">Types</button>
+                <button class="main-btn independent" id="button-random">Surprise!</button>
+                <input type="text" id="pokemonNameID" placeholder="Search by name or ID">
+                <button class="main-btn" id="search-button">🔎</button>
+                <img src="/images/home-logo.png" alt="Home Logo" class="main-btn home" id="alternative-home-btn"></img>
+            </div>
+        </header>
+
+        <div id="pokemonList" class="list">
+        </div> 
+
+        <div id="modal"></div>
+
+        <div class="control-pagination">
+            <button class="footer-btn" id="previous-btn"><- Previous</button>
+            <button class="footer-btn" id="next-btn">Next -></button>
+        </div>
+
+        <div class="types-page">
+            <div class="types-title-btn">
+                <button class="close-btn" id="main-close-btn"><- <u>Go Back</u></button></button>
+                <h1>Pokémon Types</h1>
+            </div>
+
+            <ul class="list types-list"> 
+            </ul>
+        </div>
+
+        <div id="error-msg">
+            <p><strong>No results matching your criteria :(</strong></p>
+        </div>
+    </div>
+
+    <script src="/scripts/config.js"></script>
+    <script src="/scripts/script.js"></script>
+    
+</body>
+</html>
