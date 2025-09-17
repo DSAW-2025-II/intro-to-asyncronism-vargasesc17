@@ -304,6 +304,17 @@ function showPokemonCard(data) {
         div.remove();
     });
 
+    // If escape is pressed, also get out from the pokemon card
+    const escape = (event) => {
+        if (event.key === "Escape") {
+            modal.classList.remove('active');
+            div.remove();
+            document.removeEventListener('keydown', escape);
+        }
+    };
+
+    document.addEventListener('keydown', escape);
+
     // Add the selected image/gif
     div.querySelector('.images').appendChild(img);
 
