@@ -66,6 +66,7 @@ body {
 
 button {
     font-family: inherit;
+    color: black;
 }
 
 .search-buttons-container {
